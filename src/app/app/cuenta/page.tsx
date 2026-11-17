@@ -5,7 +5,16 @@ import { PLAN_LIST, type PlanId } from "@/lib/plans";
 import { cn } from "@/lib/utils";
 
 export default function CuentaPage() {
-  const { planId, setPlan, waUsed, waLimit, waRemaining, loading } = useWorkspace();
+  const {
+    planId,
+    setPlan,
+    waUsed,
+    waLimit,
+    waRemaining,
+    loading,
+    businessName,
+    businessEmail,
+  } = useWorkspace();
 
   async function handleSelect(next: PlanId) {
     await setPlan(next);
@@ -71,8 +80,10 @@ export default function CuentaPage() {
 
       <section className="rounded-2xl border border-card-border bg-card p-5">
         <p className="text-xs uppercase tracking-wider text-muted">Negocio</p>
-        <p className="mt-2 font-display text-xl font-semibold">Mi negocio</p>
-        <p className="mt-1 text-sm text-muted">demo@salda.app</p>
+        <p className="mt-2 font-display text-xl font-semibold">
+          {businessName || "Mi negocio"}
+        </p>
+        <p className="mt-1 text-sm text-muted">{businessEmail || "—"}</p>
       </section>
     </div>
   );

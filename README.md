@@ -13,10 +13,22 @@ App web para comercios pequeños en Venezuela: organiza deudores, ve quién debe
 ```bash
 npm install
 cp .env.example .env.local
+# Edita DATABASE_URL con tu Postgres
+npm run db:push
 npm run dev
 ```
 
 Abre [http://localhost:3000](http://localhost:3000).
+
+## Base de datos (PostgreSQL)
+
+Prisma guarda:
+- Negocios (auth + plan)
+- Deudores (plan Simple)
+- Cuentas compartidas + miembros (plan Streaming)
+- Cupo de WhatsApp por mes
+
+En Vercel agrega `DATABASE_URL`, `AUTH_SECRET` y `CREDENTIALS_SECRET`.
 
 ## WhatsApp (demo → producción)
 

@@ -1,30 +1,57 @@
 import { NextResponse } from "next/server";
+import { createSession, requireBusiness } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 import { getPlan, isPlanId } from "@/lib/plans";
-import { readQuotaState, setPlanCookie } from "@/lib/quota";
+import { getBusinessQuota } from "@/lib/wa-quota-db";
 
 export async function GET() {
-  const quota = await readQuotaState();
-  const plan = getPlan(quota.planId);
+  const auth = await requireBusiness();
+  if ("error" in auth) {
+    return NextResponse.json({ ok: false, authenticated: false }, { status: 401 });
+  }
+
+  const plan = getPlan(auth.business.plan);
+  const quota = await getBusinessQuota(auth.business.id, auth.business.plan);
+
   return NextResponse.json({
-    planId: quota.planId,
+    ok: true,
+    authenticated: true,
+    planId: auth.business.plan,
     planName: plan.name,
     price: plan.price,
     waLimit: quota.limit,
     waUsed: quota.used,
     waRemaining: quota.remaining,
     month: quota.month,
+    businessName: auth.business.name,
+    businessEmail: auth.business.email,
   });
 }
 
 export async function POST(request: Request) {
+  const auth = await requireBusiness();
+  if ("error" in auth) {
+    return NextResponse.json({ ok: false, error: auth.error }, { status: auth.status });
+  }
+
   const body = (await request.json()) as { planId?: string };
   if (!body.planId || !isPlanId(body.planId)) {
     return NextResponse.json({ ok: false, error: "Plan inválido." }, { status: 400 });
   }
 
-  await setPlanCookie(body.planId);
-  const plan = getPlan(body.planId);
-  const quota = await readQuotaState();
+  const business = await prisma.business.update({
+    where: { id: auth.business.id },
+    data: { plan: body.planId },
+  });
+
+  await createSession({
+    businessId: business.id,
+    email: business.email,
+    plan: business.plan,
+  });
+
+  const plan = getPlan(business.plan);
+  const quota = await getBusinessQuota(business.id, business.plan);
 
   return NextResponse.json({
     ok: true,
@@ -32,8 +59,7 @@ export async function POST(request: Request) {
     planName: plan.name,
     price: plan.price,
     waLimit: plan.waLimit,
-    // used puede seguir el mes actual; el plan nuevo aplica el tope nuevo
     waUsed: quota.used,
-    waRemaining: Math.max(0, plan.waLimit - quota.used),
+    waRemaining: quota.remaining,
   });
 }

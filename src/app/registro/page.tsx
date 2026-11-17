@@ -15,18 +15,34 @@ function RegistroForm() {
     initial && isPlanId(initial) ? initial : "simple",
   );
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const plan = useMemo(() => getPlan(planId), [planId]);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
+    setError(null);
+    const form = new FormData(e.currentTarget);
+
     try {
-      await fetch("/api/workspace", {
+      const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId }),
+        body: JSON.stringify({
+          name: form.get("business"),
+          email: form.get("email"),
+          password: form.get("password"),
+          planId,
+        }),
       });
+      const data = (await res.json()) as { ok: boolean; error?: string };
+      if (!data.ok) {
+        setError(data.error || "No se pudo crear la cuenta.");
+        return;
+      }
       router.push("/app");
+    } catch {
+      setError("Error de red o base de datos.");
     } finally {
       setLoading(false);
     }
@@ -101,6 +117,7 @@ function RegistroForm() {
             className="w-full rounded-xl border border-card-border bg-background px-3.5 py-2.5 text-sm outline-none ring-accent focus:ring-2"
           />
         </label>
+        {error ? <p className="text-sm text-danger">{error}</p> : null}
         <button
           type="submit"
           disabled={loading}
@@ -109,7 +126,7 @@ function RegistroForm() {
           {loading ? "Creando…" : `Continuar con ${plan.name}`}
         </button>
         <p className="text-center text-xs text-muted">
-          Incluye {plan.waLimit} avisos WhatsApp al mes. Puedes cambiar de plan luego en Cuenta.
+          Incluye {plan.waLimit} avisos WhatsApp al mes. Los datos se guardan en PostgreSQL.
         </p>
       </form>
     </AuthShell>

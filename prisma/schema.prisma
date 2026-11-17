@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Plan {
+  simple
+  streaming
+}
+
+enum PaymentStatus {
+  debe
+  pronto
+  ok
+}
+
+enum AccountStatus {
+  ok
+  down
+}
+
+model Business {
+  id           String          @id @default(cuid())
+  name         String
+  email        String          @unique
+  passwordHash String
+  plan         Plan            @default(simple)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  debtors      Debtor[]
+  accounts     SharedAccount[]
+  waUsage      WaUsage[]
+}
+
+model Debtor {
+  id             String        @id @default(cuid())
+  businessId     String
+  business       Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name           String
+  phone          String
+  service        String
+  amount         Decimal       @db.Decimal(10, 2)
+  dueDate        DateTime      @db.Date
+  status         PaymentStatus @default(ok)
+  lastNotifiedAt DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([businessId])
+}
+
+model SharedAccount {
+  id          String        @id @default(cuid())
+  businessId  String
+  business    Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  service     String
+  email       String
+  passwordEnc String
+  status      AccountStatus @default(ok)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  members     Member[]
+
+  @@index([businessId])
+}
+
+model Member {
+  id             String        @id @default(cuid())
+  accountId      String
+  account        SharedAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  name           String
+  phone          String
+  amount         Decimal       @db.Decimal(10, 2)
+  dueDate        DateTime      @db.Date
+  status         PaymentStatus @default(ok)
+  lastNotifiedAt DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([accountId])
+}
+
+model WaUsage {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  month      String
+  used       Int      @default(0)
+  updatedAt  DateTime @updatedAt
+
+  @@unique([businessId, month])
+}

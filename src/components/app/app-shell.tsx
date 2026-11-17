@@ -64,13 +64,17 @@ function AppShellInner({ children }: { children: ReactNode }) {
           </nav>
           <div className="mt-8 flex items-center gap-2">
             <ThemeToggle />
-            <Link
-              href="/login"
+            <button
+              type="button"
+              onClick={async () => {
+                await fetch("/api/auth/logout", { method: "POST" });
+                window.location.href = "/login";
+              }}
               className="inline-flex h-10 items-center gap-2 rounded-full border border-card-border px-3 text-sm text-muted hover:text-foreground"
             >
               <LogOut className="h-4 w-4" />
               Salir
-            </Link>
+            </button>
           </div>
         </aside>
 
