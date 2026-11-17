@@ -2,20 +2,32 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, LayoutDashboard, LogOut, MessageCircle, Users } from "lucide-react";
+import {
+  Bell,
+  KeyRound,
+  LayoutDashboard,
+  LogOut,
+  MessageCircle,
+  Users,
+} from "lucide-react";
 import type { ReactNode } from "react";
+import { QuotaBadge } from "@/components/app/quota-badge";
+import { WorkspaceProvider, useWorkspace } from "@/components/app/workspace-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
-const nav = [
-  { href: "/app", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/app/deudores", label: "Deudores", icon: Users },
-  { href: "/app/avisos", label: "Avisos", icon: MessageCircle },
-  { href: "/app/cuenta", label: "Cuenta", icon: Bell },
-];
-
-export function AppShell({ children }: { children: ReactNode }) {
+function AppShellInner({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const { planId } = useWorkspace();
+
+  const nav = [
+    { href: "/app", label: "Dashboard", icon: LayoutDashboard },
+    planId === "streaming"
+      ? { href: "/app/cuentas", label: "Cuentas", icon: KeyRound }
+      : { href: "/app/deudores", label: "Deudores", icon: Users },
+    { href: "/app/avisos", label: "Avisos", icon: MessageCircle },
+    { href: "/app/cuenta", label: "Cuenta", icon: Bell },
+  ];
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -24,6 +36,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Link href="/" className="font-display text-xl font-semibold">
             Salda<span className="text-accent">.</span>
           </Link>
+          <div className="mt-4">
+            <QuotaBadge />
+          </div>
           <nav className="mt-8 space-y-1">
             {nav.map((item) => {
               const active =
@@ -60,11 +75,14 @@ export function AppShell({ children }: { children: ReactNode }) {
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="flex items-center justify-between border-b border-card-border px-4 py-3 md:hidden">
+          <header className="flex items-center justify-between gap-3 border-b border-card-border px-4 py-3 md:hidden">
             <Link href="/" className="font-display text-lg font-semibold">
               Salda<span className="text-accent">.</span>
             </Link>
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              <QuotaBadge />
+              <ThemeToggle />
+            </div>
           </header>
 
           <main className="flex-1 px-4 py-6 sm:px-6">{children}</main>
@@ -93,5 +111,13 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </div>
     </div>
+  );
+}
+
+export function AppShell({ children }: { children: ReactNode }) {
+  return (
+    <WorkspaceProvider>
+      <AppShellInner>{children}</AppShellInner>
+    </WorkspaceProvider>
   );
 }

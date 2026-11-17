@@ -11,6 +11,7 @@ import {
 import { Navbar } from "@/components/landing/navbar";
 import { ProductMock } from "@/components/landing/product-mock";
 import { Reveal } from "@/components/landing/reveal";
+import { PLAN_LIST } from "@/lib/plans";
 
 const steps = [
   {
@@ -91,15 +92,15 @@ export default function HomePage() {
               <span className="text-accent">sin olvidos</span>
             </h1>
             <p className="animate-rise-delay-2 mt-5 max-w-xl text-lg leading-relaxed text-muted">
-              Salda organiza a tus clientes, te muestra quién debe y te deja
-              avisar por WhatsApp en un toque. Control total por $5 al mes.
+              Salda organiza a tus clientes, te muestra quién debe y avisa por
+              WhatsApp. Cobranza simple desde $3/mes o cuentas compartidas (streaming) desde $5/mes.
             </p>
             <div className="animate-rise-delay-3 mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
                 href="/registro"
                 className="btn-shimmer inline-flex items-center justify-center rounded-full bg-accent px-6 py-3.5 text-sm font-semibold text-accent-fg shadow-[0_12px_40px_-16px_var(--glow)] transition hover:brightness-110"
               >
-                Empezar por $5/mes
+                Empezar desde $3/mes
               </Link>
               <a
                 href="#producto"
@@ -212,7 +213,7 @@ export default function HomePage() {
                       { k: "Vencidos", v: "8", c: "text-danger" },
                       { k: "Sin avisar", v: "5", c: "text-warning" },
                       { k: "Cobrados este mes", v: "34", c: "text-success" },
-                      { k: "Membresía", v: "$5", c: "text-accent" },
+                      { k: "Desde", v: "$3", c: "text-accent" },
                     ].map((stat) => (
                       <div
                         key={stat.k}
@@ -238,6 +239,41 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* Modes */}
+        <section className="border-y border-card-border bg-surface/40 py-16">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <Reveal className="mx-auto max-w-2xl text-center">
+              <p className="text-sm font-medium uppercase tracking-[0.2em] text-accent">
+                Dos modos
+              </p>
+              <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+                Simple o Streaming: elige cómo cobras
+              </h2>
+            </Reveal>
+            <div className="mt-10 grid gap-4 md:grid-cols-2">
+              <Reveal>
+                <article className="h-full rounded-3xl border border-card-border bg-card p-6">
+                  <p className="text-sm font-medium text-accent">Simple · $3/mes</p>
+                  <h3 className="mt-2 font-display text-2xl font-semibold">Cobranza clásica</h3>
+                  <p className="mt-2 text-sm text-muted leading-relaxed">
+                    Clientes, vencimientos y avisos WhatsApp. Ideal si no manejas cuentas compartidas.
+                  </p>
+                </article>
+              </Reveal>
+              <Reveal delay={0.08}>
+                <article className="h-full rounded-3xl border border-accent/40 bg-card p-6">
+                  <p className="text-sm font-medium text-accent">Streaming · $5/mes</p>
+                  <h3 className="mt-2 font-display text-2xl font-semibold">Cuentas compartidas</h3>
+                  <p className="mt-2 text-sm text-muted leading-relaxed">
+                    Una cuenta Netflix/Spotify para varias personas. Si alguien no paga, cambias la clave
+                    y avisas solo a los que están al día.
+                  </p>
+                </article>
+              </Reveal>
+            </div>
+          </div>
+        </section>
+
         {/* Pricing */}
         <section id="precio" className="scroll-mt-24 py-20">
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -246,48 +282,55 @@ export default function HomePage() {
                 Precio
               </p>
               <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
-                Un plan. Claro. $5 al mes.
+                Dos planes. Topes claros de WhatsApp.
               </h2>
               <p className="mt-3 text-muted">
-                Sin tablas confusas. Pagas la membresía y usas Salda para no perder cobros.
+                Así no se come el margen si un comercio manda demasiados avisos.
               </p>
             </Reveal>
 
-            <Reveal delay={0.1} className="mx-auto mt-10 max-w-lg">
-              <div className="relative overflow-hidden rounded-[2rem] border border-accent/40 bg-card p-8 shadow-[0_30px_80px_-48px_var(--glow)]">
-                <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-accent/20 blur-3xl" />
-                <div className="relative">
-                  <p className="text-sm font-medium text-accent">Membresía Salda</p>
-                  <div className="mt-3 flex items-end gap-1">
-                    <span className="font-display text-5xl font-semibold">$5</span>
-                    <span className="mb-1.5 text-muted">/ mes</span>
-                  </div>
-                  <ul className="mt-6 space-y-3 text-sm">
-                    {[
-                      "Clientes y vencimientos organizados",
-                      "Estados debe / por vencer / al día",
-                      "Avisos por WhatsApp con mensaje listo",
-                      "Dashboard y cola de pendientes",
-                      "Soporte por WhatsApp",
-                    ].map((item) => (
-                      <li key={item} className="flex items-start gap-2">
-                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Link
-                    href="/registro"
-                    className="btn-shimmer mt-8 inline-flex w-full items-center justify-center rounded-full bg-accent px-6 py-3.5 text-sm font-semibold text-accent-fg transition hover:brightness-110"
+            <div className="mx-auto mt-10 grid max-w-4xl gap-5 md:grid-cols-2">
+              {PLAN_LIST.map((plan, i) => (
+                <Reveal key={plan.id} delay={i * 0.08}>
+                  <div
+                    className={`relative h-full overflow-hidden rounded-[2rem] border bg-card p-7 ${
+                      plan.highlighted
+                        ? "border-accent/50 shadow-[0_30px_80px_-48px_var(--glow)]"
+                        : "border-card-border"
+                    }`}
                   >
-                    Crear mi cuenta
-                  </Link>
-                  <p className="mt-3 text-center text-xs text-muted">
-                    Activación simple. Ideal para tu primer flujo de cobros.
-                  </p>
-                </div>
-              </div>
-            </Reveal>
+                    {plan.highlighted ? (
+                      <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-accent/20 blur-3xl" />
+                    ) : null}
+                    <div className="relative">
+                      <p className="text-sm font-medium text-accent">{plan.tagline}</p>
+                      <h3 className="mt-2 font-display text-2xl font-semibold">{plan.name}</h3>
+                      <div className="mt-3 flex items-end gap-1">
+                        <span className="font-display text-5xl font-semibold">
+                          ${plan.price}
+                        </span>
+                        <span className="mb-1.5 text-muted">/ mes</span>
+                      </div>
+                      <p className="mt-2 text-sm text-muted">{plan.description}</p>
+                      <ul className="mt-6 space-y-3 text-sm">
+                        {plan.features.map((item) => (
+                          <li key={item} className="flex items-start gap-2">
+                            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <Link
+                        href={`/registro?plan=${plan.id}`}
+                        className="btn-shimmer mt-8 inline-flex w-full items-center justify-center rounded-full bg-accent px-6 py-3.5 text-sm font-semibold text-accent-fg transition hover:brightness-110"
+                      >
+                        Elegir {plan.name}
+                      </Link>
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
           </div>
         </section>
 

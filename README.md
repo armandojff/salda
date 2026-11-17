@@ -2,7 +2,11 @@
 
 Cobra por WhatsApp, sin olvidos.
 
-App web para comercios pequeños en Venezuela: organiza deudores, ve quién debe y envía avisos por WhatsApp. Membresía **$5/mes**.
+App web para comercios pequeños en Venezuela: organiza deudores, ve quién debe y envía avisos por WhatsApp.
+
+**Planes**
+- **Simple — $3/mes** · cobranza clásica · 100 avisos WA/mes
+- **Streaming — $5/mes** · cuentas compartidas · 250 avisos WA/mes
 
 ## Desarrollo
 
