@@ -60,11 +60,6 @@ export const demoDebtors: Debtor[] = [
   },
 ];
 
-export function buildWhatsAppLink(debtor: Debtor) {
-  const text = `Hola ${debtor.name}, te recordamos tu pago de $${debtor.amount} por ${debtor.service}, con vencimiento el ${debtor.dueDate}. ¿Me confirmas cuando puedas?`;
-  return `https://wa.me/${debtor.phone}?text=${encodeURIComponent(text)}`;
-}
-
 export const statusLabel: Record<DebtorStatus, string> = {
   debe: "Debe",
   pronto: "Por vencer",

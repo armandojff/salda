@@ -1,4 +1,5 @@
 import { AvisoButton } from "@/components/app/aviso-button";
+import { ProviderBadge } from "@/components/app/provider-badge";
 import { demoDebtors, statusClass, statusLabel } from "@/lib/demo-data";
 
 export default function AvisosPage() {
@@ -6,13 +7,16 @@ export default function AvisosPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
-          Avisos
-        </h1>
-        <p className="mt-1 text-muted">
-          Abre WhatsApp con el mensaje listo y confirma el envío.
-        </p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
+            Avisos
+          </h1>
+          <p className="mt-1 text-muted">
+            Envío automático con Green API (demo). En producción se cambiará a Meta.
+          </p>
+        </div>
+        <ProviderBadge />
       </div>
 
       <ul className="space-y-3">
@@ -36,12 +40,6 @@ export default function AvisosPage() {
             </div>
             <div className="flex items-center gap-2">
               <AvisoButton debtor={d} />
-              <button
-                type="button"
-                className="rounded-full border border-card-border px-3.5 py-2 text-xs font-medium text-muted hover:text-foreground"
-              >
-                Marcar avisado
-              </button>
             </div>
           </li>
         ))}
