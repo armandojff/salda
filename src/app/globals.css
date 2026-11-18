@@ -185,6 +185,15 @@ body {
   animation: shimmer 1.2s linear;
 }
 
+/* Transiciones suaves del panel admin */
+.app-card-soft {
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    background-color 0.3s ease;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -197,5 +206,9 @@ body {
   .animate-rise-delay-3,
   .btn-shimmer:hover {
     animation: none;
+  }
+
+  .app-card-soft {
+    transition: none;
   }
 }
