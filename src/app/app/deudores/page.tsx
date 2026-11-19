@@ -43,7 +43,7 @@ export default function DeudoresPage() {
 
   useEffect(() => {
     if (!wsLoading && planId === "streaming") {
-      router.replace("/app/cuentas");
+      router.replace("/app/servicios");
       return;
     }
     if (!wsLoading) void load();

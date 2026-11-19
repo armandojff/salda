@@ -12,7 +12,7 @@ export async function GET() {
 
   if (auth.business.plan !== "streaming") {
     return NextResponse.json(
-      { ok: false, error: "Tu plan actual es Simple. Cambia a Streaming para usar cuentas." },
+      { ok: false, error: "Tu plan actual es Simple. Cambia a Servicios para gestionar servicios compartidos." },
       { status: 403 },
     );
   }
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
 
   if (auth.business.plan !== "streaming") {
     return NextResponse.json(
-      { ok: false, error: "Necesitas el plan Streaming." },
+      { ok: false, error: "Necesitas el plan Servicios." },
       { status: 403 },
     );
   }

@@ -58,13 +58,24 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
-      {
-        ok: false,
-        error:
-          "No se pudo registrar. Revisa que DATABASE_URL esté configurada y las tablas creadas.",
-      },
-      { status: 500 },
-    );
+    const message = error instanceof Error ? error.message : "";
+    let hint =
+      "No se pudo registrar. Revisa DATABASE_URL en Vercel y que las tablas existan en Neon.";
+
+    if (message.includes("P1001") || message.includes("Can't reach database")) {
+      hint =
+        "No se pudo conectar a Postgres (P1001). Revisa DATABASE_URL en Vercel y que Neon esté activo.";
+    } else if (
+      message.includes("P2021") ||
+      message.includes("does not exist") ||
+      message.includes("relation")
+    ) {
+      hint =
+        "La base conectó, pero faltan tablas. Ejecuta prisma/init.sql en el SQL Editor de Neon.";
+    } else if (!process.env.DATABASE_URL) {
+      hint = "Falta DATABASE_URL en las variables de entorno de Vercel.";
+    }
+
+    return NextResponse.json({ ok: false, error: hint }, { status: 500 });
   }
 }

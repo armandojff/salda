@@ -80,8 +80,8 @@ export default function DashboardPage() {
           { label: "Por vencer", value: stats.pronto, className: "text-warning" },
           { label: "Al día", value: stats.ok, className: "text-success" },
           {
-            label: planId === "streaming" ? "Cuentas caídas" : "Cupo WA",
-            value: planId === "streaming" ? stats.caidas : waRemaining,
+            label: "Cupo WA",
+            value: waRemaining,
             className: "text-accent",
           },
         ].map((card) => (

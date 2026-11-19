@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { requireBusiness } from "@/lib/auth";
-import { decryptSecret } from "@/lib/crypto-secret";
 import { prisma } from "@/lib/db";
 import { computePaymentStatus } from "@/lib/payment-status";
+import {
+  buildCredentialsMessage,
+  buildExpiringMessage,
+  notifyActiveMembersCredentials,
+} from "@/lib/notify-credentials";
+import { decryptSecret } from "@/lib/crypto-secret";
 import { consumeBusinessQuota, getBusinessQuota } from "@/lib/wa-quota-db";
 import {
   getActiveWhatsAppProviderLabel,
@@ -20,40 +25,46 @@ export async function POST(request: Request) {
       debtorId?: string;
       memberId?: string;
       accountId?: string;
-      type?: "payment" | "credentials";
+      type?: "payment" | "credentials" | "expiring";
     };
-
-    const sends: { phone: string; message: string; markIds?: { debtorId?: string; memberId?: string } }[] =
-      [];
 
     if (body.type === "credentials" && body.accountId) {
       const account = await prisma.sharedAccount.findFirst({
         where: { id: body.accountId, businessId: auth.business.id },
-        include: { members: true },
       });
       if (!account) {
-        return NextResponse.json({ ok: false, error: "Cuenta no encontrada." }, { status: 404 });
+        return NextResponse.json({ ok: false, error: "Servicio no encontrado." }, { status: 404 });
       }
 
-      const password = decryptSecret(account.passwordEnc);
-      const vigentes = account.members.filter(
-        (m) => computePaymentStatus(m.dueDate) !== "debe",
-      );
+      const result = await notifyActiveMembersCredentials({
+        businessId: auth.business.id,
+        plan: auth.business.plan,
+        account,
+      });
 
-      if (vigentes.length === 0) {
+      if (!result.ok) {
         return NextResponse.json(
-          { ok: false, error: "No hay miembros vigentes para avisar." },
-          { status: 400 },
+          { ok: false, error: result.error, quota: "quota" in result ? result.quota : undefined },
+          { status: 402 },
         );
       }
 
-      for (const member of vigentes) {
-        sends.push({
-          phone: member.phone,
-          message: `Hola ${member.name}, actualizamos tu acceso a ${account.service}. Nuevo correo: ${account.email} | Nueva clave: ${password}. Si tienes dudas, escríbenos.`,
-        });
-      }
-    } else if (body.memberId) {
+      return NextResponse.json({
+        ok: true,
+        mode: "automatic",
+        sentCount: result.sentCount,
+        activeProvider: getActiveWhatsAppProviderLabel(),
+        quota: "quota" in result ? result.quota : undefined,
+      });
+    }
+
+    const sends: {
+      phone: string;
+      message: string;
+      markIds?: { debtorId?: string; memberId?: string };
+    }[] = [];
+
+    if (body.memberId) {
       const member = await prisma.member.findFirst({
         where: {
           id: body.memberId,
@@ -62,13 +73,38 @@ export async function POST(request: Request) {
         include: { account: true },
       });
       if (!member) {
-        return NextResponse.json({ ok: false, error: "Miembro no encontrado." }, { status: 404 });
+        return NextResponse.json({ ok: false, error: "Persona no encontrada." }, { status: 404 });
       }
-      sends.push({
-        phone: member.phone,
-        message: `Hola ${member.name}, te recordamos tu pago de $${Number(member.amount)} por ${member.account.service}, con vencimiento el ${member.dueDate.toISOString().slice(0, 10)}. ¿Me confirmas cuando puedas?`,
-        markIds: { memberId: member.id },
-      });
+
+      const status = computePaymentStatus(member.dueDate);
+      const due = member.dueDate.toISOString().slice(0, 10);
+      const amount = Number(member.amount);
+
+      if (body.type === "expiring" || status === "pronto") {
+        sends.push({
+          phone: member.phone,
+          message: buildExpiringMessage(member.name, member.account.service, due, amount),
+          markIds: { memberId: member.id },
+        });
+      } else if (status === "debe") {
+        sends.push({
+          phone: member.phone,
+          message: `Hola ${member.name}, tu pago de ${member.account.service} está vencido (${due})${amount > 0 ? ` · $${amount}` : ""}. ¿Me confirmas cuando puedas?`,
+          markIds: { memberId: member.id },
+        });
+      } else {
+        const password = decryptSecret(member.account.passwordEnc);
+        sends.push({
+          phone: member.phone,
+          message: buildCredentialsMessage(
+            member.name,
+            member.account.service,
+            member.account.email,
+            password,
+          ),
+          markIds: { memberId: member.id },
+        });
+      }
     } else if (body.debtorId) {
       const debtor = await prisma.debtor.findFirst({
         where: { id: body.debtorId, businessId: auth.business.id },
@@ -76,11 +112,23 @@ export async function POST(request: Request) {
       if (!debtor) {
         return NextResponse.json({ ok: false, error: "Deudor no encontrado." }, { status: 404 });
       }
-      sends.push({
-        phone: debtor.phone,
-        message: `Hola ${debtor.name}, te recordamos tu pago de $${Number(debtor.amount)} por ${debtor.service}, con vencimiento el ${debtor.dueDate.toISOString().slice(0, 10)}. ¿Me confirmas cuando puedas?`,
-        markIds: { debtorId: debtor.id },
-      });
+      const status = computePaymentStatus(debtor.dueDate);
+      const due = debtor.dueDate.toISOString().slice(0, 10);
+      const amount = Number(debtor.amount);
+
+      if (status === "pronto") {
+        sends.push({
+          phone: debtor.phone,
+          message: buildExpiringMessage(debtor.name, debtor.service, due, amount),
+          markIds: { debtorId: debtor.id },
+        });
+      } else {
+        sends.push({
+          phone: debtor.phone,
+          message: `Hola ${debtor.name}, te recordamos tu pago de $${amount} por ${debtor.service}, con vencimiento el ${due}. ¿Me confirmas cuando puedas?`,
+          markIds: { debtorId: debtor.id },
+        });
+      }
     } else {
       return NextResponse.json({ ok: false, error: "Faltan datos para enviar." }, { status: 400 });
     }

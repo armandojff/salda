@@ -93,7 +93,7 @@ export default function HomePage() {
             </h1>
             <p className="animate-rise-delay-2 mt-5 max-w-xl text-lg leading-relaxed text-muted">
               Salda organiza a tus clientes, te muestra quién debe y avisa por
-              WhatsApp. Cobranza simple desde $3/mes o cuentas compartidas (streaming) desde $5/mes.
+              WhatsApp. Cobranza simple desde $3/mes o servicios compartidos desde $5/mes.
             </p>
             <div className="animate-rise-delay-3 mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
@@ -247,7 +247,7 @@ export default function HomePage() {
                 Dos modos
               </p>
               <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-4xl">
-                Simple o Streaming: elige cómo cobras
+                Simple o Servicios: elige cómo cobras
               </h2>
             </Reveal>
             <div className="mt-10 grid gap-4 md:grid-cols-2">
@@ -256,17 +256,17 @@ export default function HomePage() {
                   <p className="text-sm font-medium text-accent">Simple · $3/mes</p>
                   <h3 className="mt-2 font-display text-2xl font-semibold">Cobranza clásica</h3>
                   <p className="mt-2 text-sm text-muted leading-relaxed">
-                    Clientes, vencimientos y avisos WhatsApp. Ideal si no manejas cuentas compartidas.
+                    Clientes, vencimientos y avisos WhatsApp. Ideal si no manejas servicios compartidos.
                   </p>
                 </article>
               </Reveal>
               <Reveal delay={0.08}>
                 <article className="h-full rounded-3xl border border-accent/40 bg-card p-6">
-                  <p className="text-sm font-medium text-accent">Streaming · $5/mes</p>
-                  <h3 className="mt-2 font-display text-2xl font-semibold">Cuentas compartidas</h3>
+                  <p className="text-sm font-medium text-accent">Servicios · $5/mes</p>
+                  <h3 className="mt-2 font-display text-2xl font-semibold">Servicios compartidos</h3>
                   <p className="mt-2 text-sm text-muted leading-relaxed">
-                    Una cuenta Netflix/Spotify para varias personas. Si alguien no paga, cambias la clave
-                    y avisas solo a los que están al día.
+                    Netflix, Spotify y más: un servicio, varias personas. Cambias la clave y avisas
+                    solo a quienes están al día o por vencer.
                   </p>
                 </article>
               </Reveal>

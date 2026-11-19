@@ -24,7 +24,7 @@ function AppShellInner({ children }: { children: ReactNode }) {
   const nav = [
     { href: "/app", label: "Dashboard", icon: LayoutDashboard },
     planId === "streaming"
-      ? { href: "/app/cuentas", label: "Cuentas", icon: KeyRound }
+      ? { href: "/app/servicios", label: "Servicios", icon: KeyRound }
       : { href: "/app/deudores", label: "Deudores", icon: Users },
     { href: "/app/avisos", label: "Avisos", icon: MessageCircle },
     { href: "/app/cuenta", label: "Cuenta", icon: Bell },

@@ -16,24 +16,29 @@ export async function POST(request: Request, ctx: Ctx) {
     where: { id: accountId, businessId: auth.business.id },
   });
   if (!account) {
-    return NextResponse.json({ ok: false, error: "Cuenta no encontrada." }, { status: 404 });
+    return NextResponse.json({ ok: false, error: "Servicio no encontrado." }, { status: 404 });
   }
 
   const body = (await request.json()) as {
     name?: string;
     phone?: string;
-    amount?: number | string;
+    amount?: number | string | null;
     dueDate?: string;
   };
 
   const name = body.name?.trim();
   const phone = body.phone?.replace(/\D/g, "");
-  const amount = Number(body.amount);
   const dueDate = body.dueDate ? new Date(`${body.dueDate}T00:00:00.000Z`) : null;
+
+  const rawAmount = body.amount;
+  const amount =
+    rawAmount === undefined || rawAmount === null || String(rawAmount).trim() === ""
+      ? 0
+      : Number(rawAmount);
 
   if (!name || !phone || !dueDate || Number.isNaN(amount)) {
     return NextResponse.json(
-      { ok: false, error: "Nombre, teléfono, monto y vencimiento son obligatorios." },
+      { ok: false, error: "Nombre, teléfono y fecha de vencimiento son obligatorios." },
       { status: 400 },
     );
   }
@@ -55,6 +60,7 @@ export async function POST(request: Request, ctx: Ctx) {
       ...member,
       amount: Number(member.amount),
       dueDate: member.dueDate.toISOString().slice(0, 10),
+      status: computePaymentStatus(member.dueDate),
     },
   });
 }
