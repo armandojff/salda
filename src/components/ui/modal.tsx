@@ -35,14 +35,14 @@ export function Modal({
       <button
         type="button"
         aria-label="Cerrar"
-        className="absolute inset-0 bg-black/55 backdrop-blur-[2px] transition-opacity"
+        className="absolute inset-0 bg-[color-mix(in_oklab,var(--foreground)_28%,transparent)] transition-opacity"
         onClick={onClose}
       />
       <div
         role="dialog"
         aria-modal="true"
         className={cn(
-          "relative z-10 w-full max-w-md rounded-[1.5rem] border border-card-border bg-card p-5 shadow-[0_30px_80px_-40px_rgba(0,0,0,0.7)] animate-rise sm:p-6",
+          "relative z-10 w-full max-w-md rounded-[1.5rem] border border-card-border bg-card p-5 shadow-[0_24px_60px_-36px_rgba(20,33,61,0.45)] animate-rise sm:p-6",
           className,
         )}
       >

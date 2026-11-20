@@ -581,16 +581,17 @@ export default function ServiciosPage() {
         description="Después de eliminar a esta persona, debes cambiar la clave del servicio para que ya no tenga acceso a la cuenta."
       >
         {deleteTarget ? (
-          <div className="space-y-4">
-            <div className="rounded-xl border border-warning/30 bg-warning/10 px-3 py-3 text-sm">
-              Vas a eliminar a <strong>{deleteTarget.member.name}</strong> de{" "}
-              <strong>{deleteTarget.account.service}</strong>.
-            </div>
+          <div className="space-y-5">
+            <p className="text-sm leading-relaxed text-foreground">
+              Vas a eliminar a{" "}
+              <span className="font-semibold">{deleteTarget.member.name}</span> de{" "}
+              <span className="font-semibold">{deleteTarget.account.service}</span>.
+            </p>
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => setDeleteTarget(null)}
-                className="flex-1 rounded-full border border-card-border py-2.5 text-sm"
+                className="flex-1 rounded-full border border-card-border bg-background py-2.5 text-sm transition hover:border-accent/40"
               >
                 Cancelar
               </button>
@@ -598,7 +599,7 @@ export default function ServiciosPage() {
                 type="button"
                 disabled={saving}
                 onClick={confirmDeleteMember}
-                className="flex-1 rounded-full bg-danger py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+                className="flex-1 rounded-full bg-accent py-2.5 text-sm font-semibold text-accent-fg transition hover:brightness-110 disabled:opacity-60"
               >
                 Sí, eliminar
               </button>
