@@ -2,46 +2,47 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Paleta: Navy #14213D · Cream #F4EDE0 · Coral #FF6B5B */
 :root {
-  --background: #f4f1eb;
-  --foreground: #121820;
-  --muted: #5c6570;
-  --card: #ffffff;
-  --card-border: rgba(18, 24, 32, 0.08);
-  --surface: #ebe6dc;
-  --primary: #1a3354;
-  --primary-fg: #f7f4ee;
-  --accent: #e89a1a;
-  --accent-fg: #1a1408;
-  --accent-soft: rgba(232, 154, 26, 0.16);
+  --background: #f4ede0;
+  --foreground: #14213d;
+  --muted: #5c6578;
+  --card: #fffaf3;
+  --card-border: rgba(20, 33, 61, 0.1);
+  --surface: #ebe3d4;
+  --primary: #14213d;
+  --primary-fg: #f4ede0;
+  --accent: #ff6b5b;
+  --accent-fg: #2a0f0c;
+  --accent-soft: rgba(255, 107, 91, 0.16);
   --success: #0f8f7f;
   --warning: #d97706;
-  --danger: #d14343;
-  --ring: #e89a1a;
-  --glow: rgba(232, 154, 26, 0.22);
-  --grid: rgba(18, 24, 32, 0.06);
-  --nav: rgba(244, 241, 235, 0.82);
+  --danger: #e04545;
+  --ring: #ff6b5b;
+  --glow: rgba(255, 107, 91, 0.22);
+  --grid: rgba(20, 33, 61, 0.07);
+  --nav: rgba(244, 237, 224, 0.86);
 }
 
 .dark {
-  --background: #070b12;
-  --foreground: #f2efe8;
-  --muted: #9aa3b0;
-  --card: #101826;
-  --card-border: rgba(242, 239, 232, 0.08);
-  --surface: #0c1320;
-  --primary: #f2efe8;
-  --primary-fg: #0b1220;
-  --accent: #f0a82e;
-  --accent-fg: #1a1408;
-  --accent-soft: rgba(240, 168, 46, 0.14);
+  --background: #0c1424;
+  --foreground: #f4ede0;
+  --muted: #a8b0c0;
+  --card: #14213d;
+  --card-border: rgba(244, 237, 224, 0.1);
+  --surface: #101a2e;
+  --primary: #f4ede0;
+  --primary-fg: #14213d;
+  --accent: #ff6b5b;
+  --accent-fg: #2a0f0c;
+  --accent-soft: rgba(255, 107, 91, 0.16);
   --success: #2dd4bf;
   --warning: #fbbf24;
-  --danger: #f87171;
-  --ring: #f0a82e;
-  --glow: rgba(240, 168, 46, 0.18);
-  --grid: rgba(242, 239, 232, 0.05);
-  --nav: rgba(7, 11, 18, 0.78);
+  --danger: #ff8a7a;
+  --ring: #ff6b5b;
+  --glow: rgba(255, 107, 91, 0.2);
+  --grid: rgba(244, 237, 224, 0.05);
+  --nav: rgba(12, 20, 36, 0.82);
 }
 
 @theme inline {
@@ -88,15 +89,15 @@ body {
   background-color: var(--background);
   background-image:
     radial-gradient(ellipse 80% 55% at 12% -10%, var(--glow), transparent 55%),
-    radial-gradient(ellipse 60% 40% at 95% 8%, rgba(26, 51, 84, 0.35), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 95% 8%, rgba(20, 33, 61, 0.18), transparent 50%),
     linear-gradient(to bottom, transparent, var(--background));
 }
 
 .dark .bg-mesh {
   background-image:
     radial-gradient(ellipse 70% 50% at 8% -5%, var(--glow), transparent 55%),
-    radial-gradient(ellipse 55% 40% at 100% 0%, rgba(30, 64, 110, 0.45), transparent 52%),
-    radial-gradient(ellipse 40% 30% at 50% 100%, rgba(15, 143, 127, 0.08), transparent 60%);
+    radial-gradient(ellipse 55% 40% at 100% 0%, rgba(20, 33, 61, 0.85), transparent 52%),
+    radial-gradient(ellipse 40% 30% at 50% 100%, rgba(255, 107, 91, 0.08), transparent 60%);
 }
 
 .bg-grid {
